@@ -145,7 +145,7 @@ double get_chisq1_percentile(double value) {
      * Returns:
      *      (double): Chi^2(1) percentile
      */
-    if (isnan(value)) {
+    if (boost::math::isnan(value)) {
         return(NAN);
     } else {
         boost::math::chi_squared_distribution<> chi2(1);
@@ -250,11 +250,11 @@ arma::vec finite_moment_test(arma::vec obs,
     
     long double long_exp_mu_half = exp(mu/2);
     double exp_mu_half = long_exp_mu_half;
-    if (isinf(exp_mu_half)) {
+    if (boost::math::isinf(exp_mu_half)) {
         //Stop
         Rcpp::Rcout << "Error: Absolute moment is too large. exp(mu/2) cannot be represented as double, which we need to do in the armadillo vector." << std::endl;
         Rcpp::Rcout << "            However, at this kind of value, you can safely assume that your moment is infinite. Any Trapani test would return p=0 for H0 (moment finite)." << std::endl;
-        Rcpp::Rcout << "            Absolute moment mu was in long double: " << long_exp_mu_half << ". In double if was: " << exp_mu_half << std::endl;
+        Rcpp::Rcout << "            Absolute moment mu was in long double: " << long_exp_mu_half << ". In double it was: " << exp_mu_half << std::endl;
         if (ignore_errors) {
             arma::vec return_values = {NAN, 1.0};
             return(return_values);
