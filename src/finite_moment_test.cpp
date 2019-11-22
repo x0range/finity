@@ -170,7 +170,7 @@ double compute_absolute_moment(arma::vec obs, double k) {
     int N = obs.size();
     double mu = 0;
     for (unsigned int i = 0; i < N; i++) {
-        mu += pow(abs(obs(i)), k);
+        mu += pow(fabs(obs(i)), k);
     }
     mu /= N;
     return(mu);
