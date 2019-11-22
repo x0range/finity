@@ -1,5 +1,6 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::depends(BH)]]
+// [[Rcpp::plugins("cpp11")]]
 
 /* Following two lines to suppress deprecation warnings about 
  *  integer_log2.hpp.
