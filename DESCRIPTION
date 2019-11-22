@@ -1,0 +1,19 @@
+Package: finity
+Type: Package
+Title: Test for finiteness of moments in a distribution
+Version: 0.1
+Date: 2019-11-14
+Authors@R: c(person("Torsten", "Heinrich", role = c("aut", "cre"),
+                     email = "torsten.heinrich@oxfordmartin.ox.ac.uk"),
+           person("Julian", "Winkler", role = c("aut"),
+                     email = "julian.winkler@economics.ox.ac.uk"))
+Author: Torsten Heinrich <torsten.heinrich@oxfordmartin.ox.ac.uk>,
+         Julian Winkler   <julian.winkler@economics.ox.ac.uk>
+Maintainer: Torsten Heinrich <torsten.heinrich@oxfordmartin.ox.ac.uk>
+Description: Tests whether a given moment of the distribution of a given 
+             sample is finite or not.
+License: GPL (>= 2)
+Imports: Rcpp (>= 1.0.3)
+LinkingTo: Rcpp, RcppArmadillo, BH
+RoxygenNote: 7.0.0
+Encoding: UTF-8
