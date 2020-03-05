@@ -1,5 +1,6 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::depends(BH)]]
+// [[Rcpp::plugins("cpp11")]]
 
 /* Following two lines to suppress deprecation warnings about 
  *  integer_log2.hpp.
@@ -61,9 +62,8 @@ double std_norm_moment(const double& k) {
     return(moment);
 }
 
-// Further function definitions. All accessible from R.
+// Further function definitions.
 
-// [[Rcpp::export]]
 double overloaded_std_norm_moment(double x) {
     /* Returns moment of order k of standard normal. Handles switch between int and double input.
      * Arguments: 
@@ -78,7 +78,6 @@ double overloaded_std_norm_moment(double x) {
     }
 }
 
-// [[Rcpp::export]]
 arma::uvec build_zeta_sorted(arma::vec xim, arma::vec u_series) {
     /* Computes vectors zeta (Trapani 2016 eq 6). Returns vector of sums over these vectors. 
      * This is more efficient than returning many long bool vectors.
@@ -110,7 +109,6 @@ arma::uvec build_zeta_sorted(arma::vec xim, arma::vec u_series) {
     return(zeta);
 }
 
-// [[Rcpp::export]]
 arma::uvec build_zeta_unsorted(arma::vec xim, arma::vec u_series) {     // This one is horribly inefficient. Do not use this.
     /* Computes vectors zeta (Trapani 2016 eq 6). Returns vector of sums over these vectors. 
      * This is more efficient than returning many long bool vectors.
@@ -137,6 +135,13 @@ arma::uvec build_zeta_unsorted(arma::vec xim, arma::vec u_series) {     // This 
     return(zeta);
 }
 
+//' Returns Chi^2(1) percentile for test.
+//'
+//' @param value Chi^2(1) value (type: double).
+//' @return Chi^2(1) percentile (type: double).
+//' @examples
+//' get_chisq1_percentile(20.0)
+//' @export
 // [[Rcpp::export]]
 double get_chisq1_percentile(double value) {
     /* Returns Chi^2(1) percentile for test.
@@ -145,7 +150,7 @@ double get_chisq1_percentile(double value) {
      * Returns:
      *      (double): Chi^2(1) percentile
      */
-    if (isnan(value)) {
+    if (boost::math::isnan(value)) {
         return(NAN);
     } else {
         boost::math::chi_squared_distribution<> chi2(1);
@@ -153,6 +158,16 @@ double get_chisq1_percentile(double value) {
     }
 }
 
+//' Computes absolute moment of order k in sample of observations obs.
+//'
+//' @param obs Observations (type: armadillo numeric vector).
+//' @param k Moment order (type: double)
+//' @return Moment value (type: double)
+//' @examples
+//' library(stabledist)
+//' rvs <- rstable(50000000, 1.9, 0.5, 1, 0, pm = 0)
+//' absolute_moment <- compute_absolute_moment(rvs, 2)
+//' @export
 // [[Rcpp::export]]
 double compute_absolute_moment(arma::vec obs, double k) {
     /* Computes absolute moment of order k.
@@ -170,12 +185,29 @@ double compute_absolute_moment(arma::vec obs, double k) {
     int N = obs.size();
     double mu = 0;
     for (unsigned int i = 0; i < N; i++) {
-        mu += pow(abs(obs(i)), k);
+        mu += pow(fabs(obs(i)), k);
     }
     mu /= N;
     return(mu);
 }
 
+//' Computes Trapani's (2016) finite moment test 
+//'
+//' @param obs Observations (type: armadillo numeric vector).
+//' @param k Moment order (type: double)
+//' @param r Artificial sample size (type: int). Default is N^0.8.
+//' @param psi Pescaling moment (type: double). Must be <k. Default is 2.0.
+//' @param u Sampling range width for sampling range [-u, u] (type: double) Default is 1.0.
+//' @param force_random_variate_sample If True, draw random variates for xi and u_series. If False, use quantile function values from a regular percentile space grid. This represents the density function better. Defaiult is False.
+//' @param verbose If True, print detailed output for debugging. Default is False.
+//' @param random_salting Salt number to be added to the random seed (type: int). This prevents identical random variate series if multiple instances are started and run in parallel. Default is 0.
+//' @return Trapani's Theta test statistic (type: double).
+//' @return Corresponding p-value (Chi^2(1) percentile) (type: double.
+//' @examples
+//' library(stabledist)
+//' rvs <- rstable(50000000, 1.9, 0.5, 1, 0, pm = 0)
+//' result <- finite_moment_test(rvs, 2)
+//' @export
 // [[Rcpp::export]]
 arma::vec finite_moment_test(arma::vec obs, 
                              double k, 
@@ -186,16 +218,16 @@ arma::vec finite_moment_test(arma::vec obs,
                              bool ignore_errors=0, 
                              bool verbose=0, 
                              int random_salting=0) {
-    /* Computes Trapani's 2016 finite moment test.
+    /* Computes Trapani's (2016) finite moment test.
      * Arguments: 
      *      obs (armadillo numeric vector): Observations
      *      k (double): moment order
-     *      r (int): artificial sample size. Default overridden with Trapani's recomended N^0.8 below.
+     *      r (int): artificial sample size. Default ovewridden with Trapani's recommended N^0.8 below.
      *      psi (double): rescaling moment. Must be <k. Default following Trapani 2016 2.0
      *      u (double): Sampling range width for sampling range [-u, u] (Trapani 2016, Spep 3).
      *                   Default following Trapani u=1.
-     *      force_random_variate_sample (bool): Draw random variates for xi and u_series. Default is using a quantile 
-     *                                          function values from a recular percentile space grid. This represents
+     *      force_random_variate_sample (bool): Draw random variates for xi and u_series. Default is using quantile 
+     *                                          function values from a regular percentile space grid. This represents
      *                                          the density function better.
      *      verbose (bool): Print detailed output for debugging.
      *      random_salting (int): salt number to be added to the random seed. Prevents identical random variate series 
@@ -250,11 +282,11 @@ arma::vec finite_moment_test(arma::vec obs,
     
     long double long_exp_mu_half = exp(mu/2);
     double exp_mu_half = long_exp_mu_half;
-    if (isinf(exp_mu_half)) {
+    if (boost::math::isinf(exp_mu_half)) {
         //Stop
         Rcpp::Rcout << "Error: Absolute moment is too large. exp(mu/2) cannot be represented as double, which we need to do in the armadillo vector." << std::endl;
         Rcpp::Rcout << "            However, at this kind of value, you can safely assume that your moment is infinite. Any Trapani test would return p=0 for H0 (moment finite)." << std::endl;
-        Rcpp::Rcout << "            Absolute moment mu was in long double: " << long_exp_mu_half << ". In double if was: " << exp_mu_half << std::endl;
+        Rcpp::Rcout << "            Absolute moment mu was in long double: " << long_exp_mu_half << ". In double it was: " << exp_mu_half << std::endl;
         if (ignore_errors) {
             arma::vec return_values = {NAN, 1.0};
             return(return_values);

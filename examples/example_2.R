@@ -10,20 +10,26 @@ sourceCpp("src/finite_moment_test.cpp")
 # Performance test 2: Sample of heavy-tailed functions. Plot the density of test statistics and p values.
 message("\nPerformance test 2: Density of estimates with identical samples, all with tail exponent 1.5. Testing for moments 1.5, 1.8, 2.0\n\n")
 
+cores_to_use <- parallel::detectCores() - 1 # use all except one core
+if(.Platform$OS.type == "windows") {
+  cores_to_use <- 1                         # for Windows, mclapply multiprocessing is not implemented
+}
+
 for (moment_order in c(1.5, 1.8, 2.0)) {
   n_samples <- 100
   levysamplesizes <- 100000
   true_tail_exp <- 1.5
   
+  
   test_results_Rcpp <- mclapply(1:n_samples,function(x){
     finite_moment_test(rstable(levysamplesizes, alpha = true_tail_exp, beta = 0.5, gamma=1.0, delta=0.0, pm=0), moment_order, psi=1, random_salting=x, force_random_variate_sample=T, ignore_errors=T)
-  }, mc.cores = 4)
+  }, mc.cores = cores_to_use)
   test_results_Rcpp <- Reduce(rbind, lapply(lapply(test_results_Rcpp, t), as.data.frame))
   colnames(test_results_Rcpp) <- c("Chi2TS", "p_value")
   
   test_results_Rcpp2 <- mclapply(1:n_samples,function(x){
     finite_moment_test(rstable(levysamplesizes, alpha = true_tail_exp, beta = 0.5, gamma=1.0, delta=0.0, pm=0), moment_order, psi=1, random_salting=x, ignore_errors=T)
-  }, mc.cores = 4)
+  }, mc.cores = cores_to_use)
   test_results_Rcpp2 <- Reduce(rbind, lapply(lapply(test_results_Rcpp2, t), as.data.frame))
   colnames(test_results_Rcpp2) <- c("Chi2TS", "p_value")
   
