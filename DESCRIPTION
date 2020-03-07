@@ -1,8 +1,8 @@
 Package: finity
 Type: Package
 Title: Test for Finiteness of Moments in a Distribution
-Version: 0.1
-Date: 2020-03-06
+Version: 0.1.1
+Date: 2020-03-07
 Authors@R: c(person("Torsten", "Heinrich", role = c("aut", "cre"),
                      email = "torsten.heinrich@oxfordmartin.ox.ac.uk"),
            person("Julian", "Winkler", role = c("aut"),
@@ -13,7 +13,7 @@ Maintainer: Torsten Heinrich <torsten.heinrich@oxfordmartin.ox.ac.uk>
 Description: Tests whether a given moment of the distribution of a given 
              sample is finite or not.
 License: GPL (>= 2)
-Imports: Rcpp (>= 1.0.3)
+Imports: Rcpp (>= 1.0.3), stabledist (>= 0.7)
 LinkingTo: Rcpp, RcppArmadillo, BH
 RoxygenNote: 7.0.0
 Encoding: UTF-8
