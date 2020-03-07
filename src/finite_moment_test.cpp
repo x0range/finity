@@ -199,6 +199,7 @@ double compute_absolute_moment(arma::vec obs, double k) {
 //' @param psi Pescaling moment (type: double). Must be <k. Default is 2.0.
 //' @param u Sampling range width for sampling range [-u, u] (type: double) Default is 1.0.
 //' @param force_random_variate_sample If True, draw random variates for xi and u_series. If False, use quantile function values from a regular percentile space grid. This represents the density function better. Defaiult is False.
+//' @param ignore_errors Ignore errors caused by Inf and NaN results for too large absolute moments. If True, it will return test statistic=NA, pvalue=1. If False, it will stop with an error. Default is False. But normally this will indicate an infinite moment.
 //' @param verbose If True, print detailed output for debugging. Default is False.
 //' @param random_salting Salt number to be added to the random seed (type: int). This prevents identical random variate series if multiple instances are started and run in parallel. Default is 0.
 //' @return Trapani's Theta test statistic (type: double).
@@ -229,6 +230,9 @@ arma::vec finite_moment_test(arma::vec obs,
      *      force_random_variate_sample (bool): Draw random variates for xi and u_series. Default is using quantile 
      *                                          function values from a regular percentile space grid. This represents
      *                                          the density function better.
+     *      ignore_errors (bool): Ignore errors caused by Inf and NaN results for too large absolute moments. If True, 
+     *                            it will return test statistic NA, pvalue 0. If False, it will stop with an error. 
+     *                            Default is False. But normally this will indicate an infinite moment.
      *      verbose (bool): Print detailed output for debugging.
      *      random_salting (int): salt number to be added to the random seed. Prevents identical random variate series 
      *                             if multiple instances are started and run in parallel.
@@ -284,8 +288,8 @@ arma::vec finite_moment_test(arma::vec obs,
     double exp_mu_half = long_exp_mu_half;
     if (boost::math::isinf(exp_mu_half)) {
         //Stop
-        Rcpp::Rcout << "Error: Absolute moment is too large. exp(mu/2) cannot be represented as double, which we need to do in the armadillo vector." << std::endl;
-        Rcpp::Rcout << "            However, at this kind of value, you can safely assume that your moment is infinite. Any Trapani test would return p=0 for H0 (moment finite)." << std::endl;
+        Rcpp::Rcout << "Error: Rescaled absolute moment is too large. exp(mu/2) cannot be represented as double, which we need to do in the armadillo vector." << std::endl;
+        Rcpp::Rcout << "            However, at this kind of value, you can safely assume that your moment is infinite. The test would return p=0 for H0 (moment finite)." << std::endl;
         Rcpp::Rcout << "            Absolute moment mu was in long double: " << long_exp_mu_half << ". In double it was: " << exp_mu_half << std::endl;
         if (ignore_errors) {
             arma::vec return_values = {NAN, 1.0};
