@@ -11,8 +11,7 @@
 \details{
 
 The DESCRIPTION file:
-\packageDESCRIPTION{finity}
-\packageIndices{finity}
+
 For heavy-tailed distributions with tail exponent \eqn{a}, only 
 moments of order \eqn{<a} are finite. The tail index and heavy-
 tailedness are is notoriously difficult to ascertain. But 
