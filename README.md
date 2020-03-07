@@ -14,9 +14,9 @@ suggested by Trapani (2016).
 ```
 Rscript -e 'setwd("finity");Rcpp::compileAttributes()'
 R CMD build finity
-R CMD INSTALL finity_0.1.tar.gz
+R CMD INSTALL finity_0.1.1.tar.gz
 ```
-In the install command, ```finity_0.1.tar.gz``` should be replaced with the correct filename of the archive (in particular with the correct version number).
+In the install command, ```finity_0.1.1.tar.gz``` should be replaced with the correct filename of the archive (in particular with the correct version number).
 
 ```Rcpp::compileAttributes()``` can also be run from the R interpreter. The shell commands can alternatively be run from the R interpreter as ```system("R CMD build finity")``` etc.
 
