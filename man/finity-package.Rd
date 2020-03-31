@@ -9,9 +9,6 @@
 \packageDescription{finity}
 }
 \details{
-
-The DESCRIPTION file:
-
 For heavy-tailed distributions with tail exponent \eqn{a}, only 
 moments of order \eqn{<a} are finite. The tail index and heavy-
 tailedness are is notoriously difficult to ascertain. But 
@@ -39,7 +36,7 @@ https://github.com/x0range/finity
 \examples{
 library(stabledist)
 # Generate sample
-rvs <- rstable(50000000, 1.9, 0.5, 1, 0, pm = 0)
+rvs <- rstable(10000000, 1.9, 0.5, 1, 0, pm = 0)
 # Perform test
 result <- finite_moment_test(rvs, 2)
 # Print results

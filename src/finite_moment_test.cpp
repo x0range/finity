@@ -206,7 +206,7 @@ double compute_absolute_moment(arma::vec obs, double k) {
 //' @return Corresponding p-value (Chi^2(1) percentile) (type: double.
 //' @examples
 //' library(stabledist)
-//' rvs <- rstable(50000000, 1.9, 0.5, 1, 0, pm = 0)
+//' rvs <- rstable(10000000, 1.9, 0.5, 1, 0, pm = 0)
 //' result <- finite_moment_test(rvs, 2)
 //' @export
 // [[Rcpp::export]]
