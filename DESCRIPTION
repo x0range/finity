@@ -4,12 +4,11 @@ Title: Test for Finiteness of Moments in a Distribution
 Version: 0.1.2
 Date: 2020-03-31
 Authors@R: c(person("Torsten", "Heinrich", role = c("aut", "cre"),
-                     email = "torsten.heinrich@oxfordmartin.ox.ac.uk"),
+                     email = "torsten.heinrich@posteo.net"),
            person("Julian", "Winkler", role = c("aut"),
                      email = "julian.winkler@economics.ox.ac.uk"))
-Author: Torsten Heinrich <torsten.heinrich@oxfordmartin.ox.ac.uk>,
-         Julian Winkler   <julian.winkler@economics.ox.ac.uk>
-Maintainer: Torsten Heinrich <torsten.heinrich@oxfordmartin.ox.ac.uk>
+Author: Torsten Heinrich [aut, cre], Julian Winkler [aut]
+Maintainer: Torsten Heinrich <torsten.heinrich@posteo.net>
 Description: Tests whether a given moment of the distribution of a given 
              sample is finite or not.
 License: GPL (>= 2)
