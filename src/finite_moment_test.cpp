@@ -135,8 +135,9 @@ arma::uvec build_zeta_unsorted(arma::vec xim, arma::vec u_series) {     // This 
     return(zeta);
 }
 
-//' Returns Chi^2(1) percentile for test.
+//' Chi^2(1) Percentile
 //'
+//' @description Returns the Chi^2(1) percentile for the test statistic.
 //' @param value Chi^2(1) value (type: double).
 //' @return Chi^2(1) percentile (type: double).
 //' @examples
@@ -158,8 +159,9 @@ double get_chisq1_percentile(double value) {
     }
 }
 
-//' Computes absolute moment of order k in sample of observations obs.
-//'
+//' Absolute Moment of Order k
+//' 
+//' @description Computes the absolute moment of order k of a sample of observations.
 //' @param obs Observations (type: armadillo numeric vector).
 //' @param k Moment order (type: double)
 //' @return Moment value (type: double)
@@ -191,8 +193,9 @@ double compute_absolute_moment(arma::vec obs, double k) {
     return(mu);
 }
 
-//' Computes Trapani's (2016) finite moment test 
-//'
+//' Finite Moment Test 
+//' 
+//' @description Computes Trapani's (2016) finite moment test for moment of order k of the distribution of a given the sample of observations obs. Knowledge of the identity of the distribution is not required. The null hypothesis is that the moment is infinite; the alternative is that it is finite. The function takes parameters of the test as optional arguments; some insights into the impact the choice of parameter values has are given in Trapani (2016).
 //' @param obs Observations (type: armadillo numeric vector).
 //' @param k Moment order (type: double)
 //' @param r Artificial sample size (type: int). Default is N^0.8.
@@ -203,7 +206,7 @@ double compute_absolute_moment(arma::vec obs, double k) {
 //' @param verbose If True, print detailed output for debugging. Default is False.
 //' @param random_salting Salt number to be added to the random seed (type: int). This prevents identical random variate series if multiple instances are started and run in parallel. Default is 0.
 //' @return Trapani's Theta test statistic (type: double).
-//' @return Corresponding p-value (Chi^2(1) percentile) (type: double.
+//' @return Corresponding p-value (Chi^2(1) percentile) (type: double).
 //' @examples
 //' library(stabledist)
 //' rvs <- rstable(100000, 1.9, 0.5, 1, 0, pm = 0)
