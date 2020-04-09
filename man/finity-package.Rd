@@ -38,9 +38,8 @@ https://github.com/x0range/finity
 %~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
 \examples{
-library(stabledist)
 # Generate sample
-rvs <- rstable(100000, 1.9, 0.5, 1, 0, pm = 0)
+rvs <- stabledist::rstable(100000, 1.9, 0.5, 1, 0, pm = 0)
 # Perform test
 result <- finite_moment_test(rvs, 2)
 # Print results
