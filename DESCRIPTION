@@ -1,8 +1,8 @@
 Package: finity
 Type: Package
 Title: Test for Finiteness of Moments in a Distribution
-Version: 0.1.2
-Date: 2020-04-07
+Version: 0.1.3
+Date: 2020-04-08
 Authors@R: c(person("Torsten", "Heinrich", role = c("aut", "cre"),
                      email = "torsten.heinrich@posteo.net"),
            person("Julian", "Winkler", role = c("aut"),
