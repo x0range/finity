@@ -280,7 +280,7 @@ arma::vec finite_moment_test(arma::vec obs,
     long double mu_psi = compute_absolute_moment(obs, psi);
     // rescaling to mu* (Trapani 2016 eq 16)
     if (verbose) Rcpp::Rcout << "mu is: " << mu << std::endl;
-    mu = mu / pow(mu_psi, k / psi);
+    mu = mu / pow(((long double)mu_psi), ((long double)(k / psi)));
     if (verbose) Rcpp::Rcout << "   ...rescaled to: " << mu << std::endl;
     long double rescaling_factor_2 = pow(overloaded_std_norm_moment(psi), k / psi) / overloaded_std_norm_moment(k);
     // rescaling to mu** (Trapani 2016 eq 17)
