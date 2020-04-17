@@ -2,6 +2,8 @@
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::plugins("cpp11")]]
 
+#define BOOST_DISABLE_ASSERTS
+
 /* Following two lines to suppress deprecation warnings about 
  *  integer_log2.hpp.
  */
