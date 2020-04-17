@@ -295,7 +295,9 @@ arma::vec finite_moment_test(arma::vec obs,
         Rcpp::Rcout << "            However, at this kind of value, you can safely assume that your moment is infinite. The test would return p=0 for H0 (moment finite)." << std::endl;
         Rcpp::Rcout << "            Absolute moment mu was in long double: " << long_exp_mu_half << ". In double it was: " << exp_mu_half << std::endl;
         if (ignore_errors) {
-            arma::vec return_values = {NAN, 1.0};
+            //arma::vec return_values = {NAN, 1.0};
+            arma::vec return_values(2);
+            return_values << NAN << 1.0;
             return(return_values);
         } else {
             Rcpp::stop("Infinite value detected!\n");
@@ -405,7 +407,9 @@ arma::vec finite_moment_test(arma::vec obs,
     }
     
     // Return
-    arma::vec return_values = {Theta, chisq1_percentile};
+    //arma::vec return_values = {Theta, chisq1_percentile};
+    arma::vec return_values(2);
+    return_values << Theta << chisq1_percentile;
     return(return_values);
 }
 
