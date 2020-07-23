@@ -2,6 +2,8 @@
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::plugins("cpp11")]]
 
+#define BOOST_DISABLE_ASSERTS
+
 /* Following two lines to suppress deprecation warnings about 
  *  integer_log2.hpp.
  */
@@ -135,8 +137,9 @@ arma::uvec build_zeta_unsorted(arma::vec xim, arma::vec u_series) {     // This 
     return(zeta);
 }
 
-//' Returns Chi^2(1) percentile for test.
+//' Chi^2(1) Percentile
 //'
+//' @description Returns the Chi^2(1) percentile for the test statistic.
 //' @param value Chi^2(1) value (type: double).
 //' @return Chi^2(1) percentile (type: double).
 //' @examples
@@ -158,14 +161,14 @@ double get_chisq1_percentile(double value) {
     }
 }
 
-//' Computes absolute moment of order k in sample of observations obs.
-//'
+//' Absolute Moment of Order k
+//' 
+//' @description Computes the absolute moment of order k of a sample of observations.
 //' @param obs Observations (type: armadillo numeric vector).
 //' @param k Moment order (type: double)
 //' @return Moment value (type: double)
 //' @examples
-//' library(stabledist)
-//' rvs <- rstable(50000000, 1.9, 0.5, 1, 0, pm = 0)
+//' rvs <- stabledist::rstable(100000, 1.9, 0.5, 1, 0, pm = 0)
 //' absolute_moment <- compute_absolute_moment(rvs, 2)
 //' @export
 // [[Rcpp::export]]
@@ -191,21 +194,22 @@ double compute_absolute_moment(arma::vec obs, double k) {
     return(mu);
 }
 
-//' Computes Trapani's (2016) finite moment test 
-//'
+//' Finite Moment Test 
+//' 
+//' @description Computes Trapani's (2016) finite moment test for moment of order k of the distribution of a given the sample of observations obs. Knowledge of the identity of the distribution is not required. The null hypothesis is that the moment is infinite; the alternative is that it is finite. The function takes parameters of the test as optional arguments; some insights into the impact the choice of parameter values has are given in Trapani (2016).
 //' @param obs Observations (type: armadillo numeric vector).
 //' @param k Moment order (type: double)
 //' @param r Artificial sample size (type: int). Default is N^0.8.
 //' @param psi Pescaling moment (type: double). Must be <k. Default is 2.0.
 //' @param u Sampling range width for sampling range [-u, u] (type: double) Default is 1.0.
 //' @param force_random_variate_sample If True, draw random variates for xi and u_series. If False, use quantile function values from a regular percentile space grid. This represents the density function better. Defaiult is False.
+//' @param ignore_errors Ignore errors caused by Inf and NaN results for too large absolute moments. If True, it will return test statistic=NA, pvalue=1. If False, it will stop with an error. Default is False. But normally this will indicate an infinite moment.
 //' @param verbose If True, print detailed output for debugging. Default is False.
 //' @param random_salting Salt number to be added to the random seed (type: int). This prevents identical random variate series if multiple instances are started and run in parallel. Default is 0.
 //' @return Trapani's Theta test statistic (type: double).
-//' @return Corresponding p-value (Chi^2(1) percentile) (type: double.
+//' @return Corresponding p-value (Chi^2(1) percentile) (type: double).
 //' @examples
-//' library(stabledist)
-//' rvs <- rstable(50000000, 1.9, 0.5, 1, 0, pm = 0)
+//' rvs <- stabledist::rstable(100000, 1.9, 0.5, 1, 0, pm = 0)
 //' result <- finite_moment_test(rvs, 2)
 //' @export
 // [[Rcpp::export]]
@@ -229,6 +233,9 @@ arma::vec finite_moment_test(arma::vec obs,
      *      force_random_variate_sample (bool): Draw random variates for xi and u_series. Default is using quantile 
      *                                          function values from a regular percentile space grid. This represents
      *                                          the density function better.
+     *      ignore_errors (bool): Ignore errors caused by Inf and NaN results for too large absolute moments. If True, 
+     *                            it will return test statistic NA, pvalue 0. If False, it will stop with an error. 
+     *                            Default is False. But normally this will indicate an infinite moment.
      *      verbose (bool): Print detailed output for debugging.
      *      random_salting (int): salt number to be added to the random seed. Prevents identical random variate series 
      *                             if multiple instances are started and run in parallel.
@@ -273,7 +280,7 @@ arma::vec finite_moment_test(arma::vec obs,
     long double mu_psi = compute_absolute_moment(obs, psi);
     // rescaling to mu* (Trapani 2016 eq 16)
     if (verbose) Rcpp::Rcout << "mu is: " << mu << std::endl;
-    mu = mu / pow(mu_psi, k / psi);
+    mu = mu / pow(((long double)mu_psi), ((long double)(k / psi)));
     if (verbose) Rcpp::Rcout << "   ...rescaled to: " << mu << std::endl;
     long double rescaling_factor_2 = pow(overloaded_std_norm_moment(psi), k / psi) / overloaded_std_norm_moment(k);
     // rescaling to mu** (Trapani 2016 eq 17)
@@ -284,11 +291,13 @@ arma::vec finite_moment_test(arma::vec obs,
     double exp_mu_half = long_exp_mu_half;
     if (boost::math::isinf(exp_mu_half)) {
         //Stop
-        Rcpp::Rcout << "Error: Absolute moment is too large. exp(mu/2) cannot be represented as double, which we need to do in the armadillo vector." << std::endl;
-        Rcpp::Rcout << "            However, at this kind of value, you can safely assume that your moment is infinite. Any Trapani test would return p=0 for H0 (moment finite)." << std::endl;
+        Rcpp::Rcout << "Error: Rescaled absolute moment is too large. exp(mu/2) cannot be represented as double, which we need to do in the armadillo vector." << std::endl;
+        Rcpp::Rcout << "            However, at this kind of value, you can safely assume that your moment is infinite. The test would return p=0 for H0 (moment finite)." << std::endl;
         Rcpp::Rcout << "            Absolute moment mu was in long double: " << long_exp_mu_half << ". In double it was: " << exp_mu_half << std::endl;
         if (ignore_errors) {
-            arma::vec return_values = {NAN, 1.0};
+            //arma::vec return_values = {NAN, 1.0};
+            arma::vec return_values(2);
+            return_values << NAN << 1.0;
             return(return_values);
         } else {
             Rcpp::stop("Infinite value detected!\n");
@@ -398,7 +407,9 @@ arma::vec finite_moment_test(arma::vec obs,
     }
     
     // Return
-    arma::vec return_values = {Theta, chisq1_percentile};
+    //arma::vec return_values = {Theta, chisq1_percentile};
+    arma::vec return_values(2);
+    return_values << Theta << chisq1_percentile;
     return(return_values);
 }
 

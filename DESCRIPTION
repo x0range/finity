@@ -1,19 +1,24 @@
 Package: finity
 Type: Package
-Title: Test for finiteness of moments in a distribution
-Version: 0.1
-Date: 2019-11-14
+Title: Test for Finiteness of Moments in a Distribution
+Version: 0.1.4
+Date: 2020-04-17
 Authors@R: c(person("Torsten", "Heinrich", role = c("aut", "cre"),
-                     email = "torsten.heinrich@oxfordmartin.ox.ac.uk"),
+                     email = "torsten.heinrich@posteo.net"),
            person("Julian", "Winkler", role = c("aut"),
                      email = "julian.winkler@economics.ox.ac.uk"))
-Author: Torsten Heinrich <torsten.heinrich@oxfordmartin.ox.ac.uk>,
-         Julian Winkler   <julian.winkler@economics.ox.ac.uk>
-Maintainer: Torsten Heinrich <torsten.heinrich@oxfordmartin.ox.ac.uk>
-Description: Tests whether a given moment of the distribution of a given 
-             sample is finite or not.
+Author: Torsten Heinrich [aut, cre], Julian Winkler [aut]
+Maintainer: Torsten Heinrich <torsten.heinrich@posteo.net>
+Description: The purpose of this package is to tests whether a given 
+             moment of the distribution of a given sample is finite or not. For 
+             heavy-tailed distributions with tail exponent b, only moments of 
+             order smaller than b are finite. Tail exponent and heavy-
+             tailedness are notoriously difficult to ascertain. But the 
+             finiteness of moments (including fractional moments) can be tested 
+             directly. This package does that following the test suggested by 
+             Trapani (2016) <doi:10.1016/j.jeconom.2015.08.006>.
 License: GPL (>= 2)
-Imports: Rcpp (>= 1.0.3)
+Imports: Rcpp (>= 1.0.3), stabledist (>= 0.7)
 LinkingTo: Rcpp, RcppArmadillo, BH
 RoxygenNote: 7.0.0
 Encoding: UTF-8

@@ -10,7 +10,10 @@ sourceCpp("src/finite_moment_test.cpp")
 # Performance test 1: Some heavy-tailed distribution
 message("\nPerformance test 1: Large sample\n\n")
 
+# Create test data
 rvs <- rstable(50000000, 1.9, 0.5, 1, 0, pm = 0)
+
+# Perform and time finite moment test
 system.time(
   {
     result <- finite_moment_test(rvs, 2)
