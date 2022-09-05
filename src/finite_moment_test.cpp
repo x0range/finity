@@ -407,9 +407,7 @@ arma::vec finite_moment_test(arma::vec obs,
     }
     
     // Return
-    //arma::vec return_values = {Theta, chisq1_percentile};
-    arma::vec return_values(2);
-    return_values << Theta << chisq1_percentile;
+    arma::vec return_values({Theta, chisq1_percentile});
     return(return_values);
 }
 
